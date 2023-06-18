@@ -3,7 +3,7 @@ import { User } from "./user.interface";
 
 const UserSchema = new Schema<User>(
   {
-    phoneNumber: { type: Schema.Types.String, required: true },
+    phoneNumber: { type: Schema.Types.String, required: true, unique: true },
     role: {
       type: Schema.Types.String,
       enum: ["seller", "buyer"],

@@ -1,5 +1,5 @@
 import { Schema, model } from "mongoose";
-import { Breed, Category, Cow, Label } from "./user.interface";
+import { Breed, Category, Cow, Label, Location } from "./cow.interface";
 
 // Create a Mongoose schema for the Cow model
 const CowSchema = new Schema<Cow>({
@@ -19,8 +19,8 @@ const CowSchema = new Schema<Cow>({
   weight: { type: Schema.Types.Number, required: true },
   label: {
     type: Schema.Types.String,
-    enum: Object.keys(Label),
-    default: Label.FOR_SALE,
+    // enum: Object.keys(Label),
+    default: Label.ForSale,
   },
   category: {
     type: Schema.Types.String,

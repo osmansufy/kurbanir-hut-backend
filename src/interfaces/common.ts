@@ -14,3 +14,8 @@ export type IGenericErrorResponse = {
   message: string;
   errorMessages: IGenericErrorMsg[];
 };
+
+export type TypePriceFilter = {
+  minPrice?: number;
+  maxPrice?: number;
+};

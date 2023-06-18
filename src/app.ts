@@ -3,7 +3,7 @@ import cors from "cors";
 import httpStatus from "http-status";
 import globalErrorHandler from "./main/middleware/globalErrorHandler";
 import ApiError from "./errors/ApiError";
-
+import routes from "./main/routes";
 const app: Application = express();
 
 app.use(cors());
@@ -12,13 +12,17 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// routes
+
+app.use("/api/v1", routes);
+
 //Testing
-app.get("/error", (next: NextFunction) => {
-  throw new ApiError(
-    httpStatus.CONFLICT,
-    "Academic semester is already exist !"
-  );
-});
+// app.get("/error", (next: NextFunction) => {
+//   throw new ApiError(
+//     httpStatus.CONFLICT,
+//     "Academic semester is already exist !"
+//   );
+// });
 // global error handler
 
 app.use(globalErrorHandler);
