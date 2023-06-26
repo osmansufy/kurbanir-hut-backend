@@ -1,12 +1,13 @@
 import { Schema, model } from "mongoose";
 import { User } from "./user.interface";
+import { Enum_Role } from "../../../interfaces/common";
 
 const UserSchema = new Schema<User>(
   {
     phoneNumber: { type: Schema.Types.String, required: true, unique: true },
     role: {
       type: Schema.Types.String,
-      enum: ["seller", "buyer"],
+      enum: Enum_Role,
       required: true,
     },
     password: { type: Schema.Types.String, required: true },

@@ -19,3 +19,18 @@ export type TypePriceFilter = {
   minPrice?: number;
   maxPrice?: number;
 };
+
+export enum Enum_Role {
+  admin = "admin",
+  seller = "seller",
+  buyer = "buyer",
+}
+
+export interface ILoginServerRequest {
+  accessToken: string;
+  refreshToken?: string;
+}
+export interface ILoginRequest {
+  phoneNumber: string;
+  password: string;
+}

@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import ApiError from "../../../errors/ApiError";
 import { Cow, ICowFilter } from "./cow.interface";
 import CowModel from "./cow.model";
-import { paginationHelpers } from "../../../helper/pagination";
+import { paginationHelpers } from "../../../helpers/pagination";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { cowSearchableFields } from "./cow.constant";
 import { IGenericResponse, TypePriceFilter } from "../../../interfaces/common";
