@@ -2,7 +2,10 @@ import httpStatus from "http-status";
 import ApiError from "../../../errors/ApiError";
 import { IAdmin } from "./admin.interface";
 import { AdminModel } from "./admin.model";
-import { ILoginRequest, ILoginServerRequest } from "../../../interfaces/common";
+import {
+  ILoginRequest,
+  ILoginServerResponse,
+} from "../../../interfaces/common";
 import { JwtHelper } from "../../../helpers/jwtHelper";
 import config from "../../../config/";
 
@@ -25,7 +28,7 @@ const createAdmin = async (admin: Partial<IAdmin>): Promise<IAdmin | null> => {
 
 const loginAdmin = async (
   admin: ILoginRequest
-): Promise<ILoginServerRequest> => {
+): Promise<ILoginServerResponse> => {
   const isAdminExist = await AdminModel.findOne({
     phoneNumber: admin.phoneNumber,
     password: admin.password,

@@ -26,7 +26,7 @@ export enum Enum_Role {
   buyer = "buyer",
 }
 
-export interface ILoginServerRequest {
+export interface ILoginServerResponse {
   accessToken: string;
   refreshToken?: string;
 }

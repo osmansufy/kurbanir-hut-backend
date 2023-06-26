@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import catchAsync from "../../../utility/catchAsync";
 import { AdminService } from "./admin.service";
 import sendResponse from "../../../utility/sendResponse";
-import { ILoginServerRequest } from "../../../interfaces/common";
+import { ILoginServerResponse } from "../../../interfaces/common";
 
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const newAdmin = await AdminService.createAdmin(req.body);
@@ -18,7 +18,7 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
 const loginAdmin = catchAsync(async (req: Request, res: Response) => {
   const newAdmin = await AdminService.loginAdmin(req.body);
 
-  sendResponse<ILoginServerRequest>(res, {
+  sendResponse<ILoginServerResponse>(res, {
     statusCode: 201,
     success: true,
     message: "Admin logged in successfully",

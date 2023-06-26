@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
 import catchAsync from "../../../utility/catchAsync";
 import { UserService } from "./user.service";
+import sendResponse from "../../../utility/sendResponse";
+import { ILoginServerResponse } from "../../../interfaces/common";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const newUser = await UserService.createUser(req.body);
@@ -57,10 +59,24 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const loginUser = catchAsync(async (req: Request, res: Response) => {
+  const newAdmin = await UserService.loginUser(req.body);
+
+  sendResponse<ILoginServerResponse>(res, {
+    statusCode: 201,
+    success: true,
+    message: "User logged in successfully",
+    data: {
+      accessToken: newAdmin.accessToken,
+    },
+  });
+});
+
 export const UserController = {
   createUser,
   getSingleUser,
   getAllUsers,
   updateUser,
   deleteUser,
+  loginUser,
 };
