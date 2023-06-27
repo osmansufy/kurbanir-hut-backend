@@ -49,7 +49,13 @@ const getSingleCow = catchAsync(async (req: Request, res: Response) => {
 });
 
 const updateCow = catchAsync(async (req: Request, res: Response) => {
-  const updatedCow = await CowService.updateCow(req.params.id, req.body);
+  const seller = req.user;
+
+  const updatedCow = await CowService.updateCow(
+    req.params.id,
+    seller?.id,
+    req.body
+  );
 
   res.status(200).json({
     success: true,
@@ -60,7 +66,8 @@ const updateCow = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteCow = catchAsync(async (req: Request, res: Response) => {
-  await CowService.deleteCow(req.params.id);
+  const seller = req.user;
+  await CowService.deleteCow(req.params.id, seller?.id);
 
   res.status(200).json({
     success: true,

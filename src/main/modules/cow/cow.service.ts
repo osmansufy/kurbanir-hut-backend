@@ -90,17 +90,34 @@ const getAllCows = async (
 
 const getSingleCow = async (id: string): Promise<Cow | null> => {
   const cow = await CowModel.findById(id).populate("seller");
+
   return cow;
 };
 
-const updateCow = async (id: string, cow: Cow): Promise<Cow | null> => {
+const updateCow = async (
+  id: string,
+  sellerId: string,
+  cow: Cow
+): Promise<Cow | null> => {
+  const isExist = await CowModel.findOne({ _id: id, seller: sellerId });
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cow not found");
+  }
+
   const updatedCow = await CowModel.findByIdAndUpdate(id, cow, {
     new: true,
   });
   return updatedCow;
 };
 
-const deleteCow = async (id: string): Promise<Cow | null> => {
+const deleteCow = async (id: string, sellerId: string): Promise<Cow | null> => {
+  const isExist = await CowModel.findOne({ _id: id, seller: sellerId });
+
+  if (!isExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Cow not found");
+  }
+
   const deletedCow = await CowModel.findByIdAndDelete(id);
   return deletedCow;
 };
