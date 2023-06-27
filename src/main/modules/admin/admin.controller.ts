@@ -18,6 +18,13 @@ const createAdmin = catchAsync(async (req: Request, res: Response) => {
 const loginAdmin = catchAsync(async (req: Request, res: Response) => {
   const newAdmin = await AdminService.loginAdmin(req.body);
 
+  const cookieOptions = {
+    secure: true,
+    httpOnly: true,
+  };
+
+  res.cookie("refreshToken", newAdmin.refreshToken, cookieOptions);
+
   sendResponse<ILoginServerResponse>(res, {
     statusCode: 201,
     success: true,

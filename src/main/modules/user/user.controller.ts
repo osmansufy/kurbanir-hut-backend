@@ -60,14 +60,43 @@ const deleteUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
-  const newAdmin = await UserService.loginUser(req.body);
+  const newUser = await UserService.loginUser(req.body);
+
+  const cookieOptions = {
+    secure: true,
+    httpOnly: true,
+  };
+
+  res.cookie("refreshToken", newUser.refreshToken, cookieOptions);
 
   sendResponse<ILoginServerResponse>(res, {
     statusCode: 201,
     success: true,
     message: "User logged in successfully",
     data: {
-      accessToken: newAdmin.accessToken,
+      accessToken: newUser.accessToken,
+    },
+  });
+});
+
+const refreshToken = catchAsync(async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+
+  const newUser = await UserService.refreshToken(refreshToken);
+
+  const cookieOptions = {
+    secure: true,
+    httpOnly: true,
+  };
+
+  res.cookie("refreshToken", refreshToken, cookieOptions);
+
+  sendResponse<ILoginServerResponse>(res, {
+    statusCode: 200,
+    success: true,
+    message: "User logged in successfully",
+    data: {
+      accessToken: newUser.accessToken,
     },
   });
 });
@@ -79,4 +108,5 @@ export const UserController = {
   updateUser,
   deleteUser,
   loginUser,
+  refreshToken,
 };

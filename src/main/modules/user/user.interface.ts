@@ -1,5 +1,5 @@
 // Define the User model interface
-import { Document } from "mongoose";
+import { Document, Model } from "mongoose";
 
 export interface User extends Document {
   phoneNumber: string;
@@ -13,3 +13,16 @@ export interface User extends Document {
   budget: number;
   income: number;
 }
+
+export interface IUserExtends extends Model<User> {
+  isUserExist(phoneNumber: string): Promise<User | null>;
+
+  isPasswordMatch(
+    givenPassword: string,
+    savedPassword: string
+  ): Promise<boolean>;
+}
+
+export type IRefreshTokenResponse = {
+  accessToken: string;
+};

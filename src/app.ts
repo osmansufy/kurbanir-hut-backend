@@ -4,6 +4,7 @@ import httpStatus from "http-status";
 import globalErrorHandler from "./main/middleware/globalErrorHandler";
 import ApiError from "./errors/ApiError";
 import routes from "./main/routes";
+import cookieParser from "cookie-parser";
 const app: Application = express();
 
 app.use(cors());
@@ -11,6 +12,8 @@ app.use(cors());
 // parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cookieParser());
 
 // routes
 

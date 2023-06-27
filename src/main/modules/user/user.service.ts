@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
 import ApiError from "../../../errors/ApiError";
-import { User } from "./user.interface";
+import { IRefreshTokenResponse, User } from "./user.interface";
 import UserModel from "./user.model";
 import {
   ILoginRequest,
@@ -8,6 +8,7 @@ import {
 } from "../../../interfaces/common";
 import config from "../../../config";
 import { JwtHelper } from "../../../helpers/jwtHelper";
+import { Secret } from "jsonwebtoken";
 
 const createUser = async (user: User): Promise<User | null> => {
   // check if user already exists with the same phone number
@@ -74,13 +75,19 @@ const deleteUser = async (id: string): Promise<User | null> => {
 const loginUser = async (
   user: ILoginRequest
 ): Promise<ILoginServerResponse> => {
-  const isUserExist = await UserModel.findOne({
-    phoneNumber: user.phoneNumber,
-    password: user.password,
-  });
+  const isUserExist = await UserModel.isUserExist(user.phoneNumber);
 
   if (!isUserExist) {
     throw new ApiError(httpStatus.CONFLICT, "User not found");
+  }
+
+  const isPasswordMatch = await UserModel.isPasswordMatch(
+    user.password,
+    isUserExist.password
+  );
+
+  if (!isPasswordMatch) {
+    throw new ApiError(httpStatus.CONFLICT, "Credentials not match");
   }
 
   // create token
@@ -109,6 +116,40 @@ const loginUser = async (
   };
 };
 
+const refreshToken = async (token: string): Promise<IRefreshTokenResponse> => {
+  // invalid token - synchronous
+  let verifiedToken = null;
+  try {
+    verifiedToken = JwtHelper.verifyToken(
+      token,
+      config.jwt.refresh_secret as Secret
+    );
+  } catch (err) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Invalid Refresh Token");
+  }
+
+  // checking deleted user - asynchronous
+
+  const isUserExist = await UserModel.findById(verifiedToken.id);
+
+  if (!isUserExist) {
+    throw new ApiError(httpStatus.FORBIDDEN, "Invalid Refresh Token");
+  }
+
+  const accessToken = JwtHelper.createToken(
+    {
+      id: verifiedToken.id,
+      role: verifiedToken.role,
+    },
+    config.jwt.secret as string,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    accessToken,
+  };
+};
+
 export const UserService = {
   createUser,
   getSingleUser,
@@ -116,4 +157,5 @@ export const UserService = {
   updateUser,
   deleteUser,
   loginUser,
+  refreshToken,
 };
