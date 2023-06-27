@@ -1,4 +1,4 @@
-import { Document } from "mongoose";
+import { Document, Model } from "mongoose";
 import { Enum_Role } from "../../../interfaces/common";
 
 export interface IAdmin extends Document {
@@ -10,4 +10,15 @@ export interface IAdmin extends Document {
     lastName: string;
   };
   address: string;
+}
+
+export interface IAdminModel extends Model<IAdmin> {
+  isAdminExist(
+    phoneNumber: string
+  ): Promise<Pick<IAdmin, "phoneNumber" | "role" | "password" | "id">>;
+
+  isPasswordMatch(
+    givenPassword: string,
+    savedPassword: string
+  ): Promise<boolean>;
 }

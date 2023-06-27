@@ -11,6 +11,7 @@ router.post(
   AdminController.createAdmin
 );
 
+router.delete("/delete-admin/:id", AdminController.deleteAdmin);
 router.post(
   "/login",
   validateRequest(AdminValidation.loginAdminZodSchema),

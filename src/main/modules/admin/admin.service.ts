@@ -9,10 +9,8 @@ import {
 import { JwtHelper } from "../../../helpers/jwtHelper";
 import config from "../../../config/";
 
-const createAdmin = async (admin: Partial<IAdmin>): Promise<IAdmin | null> => {
-  const isAdminExist = await AdminModel.findOne({
-    phoneNumber: admin.phoneNumber,
-  });
+const createAdmin = async (admin: IAdmin): Promise<IAdmin | null> => {
+  const isAdminExist = await AdminModel.isAdminExist(admin.phoneNumber);
 
   if (isAdminExist) {
     throw new ApiError(
@@ -29,20 +27,25 @@ const createAdmin = async (admin: Partial<IAdmin>): Promise<IAdmin | null> => {
 const loginAdmin = async (
   admin: ILoginRequest
 ): Promise<ILoginServerResponse> => {
-  const isAdminExist = await AdminModel.findOne({
-    phoneNumber: admin.phoneNumber,
-    password: admin.password,
-  });
+  const isAdminExist = await AdminModel.isAdminExist(admin.phoneNumber);
 
   if (!isAdminExist) {
     throw new ApiError(httpStatus.CONFLICT, "Admin not found");
   }
 
+  const isPasswordMatch = await AdminModel.isPasswordMatch(
+    admin.password,
+    isAdminExist.password
+  );
+
+  if (!isPasswordMatch) {
+    throw new ApiError(httpStatus.CONFLICT, "Credentials not match");
+  }
   // create token
 
   const accessToken = JwtHelper.createToken(
     {
-      id: isAdminExist._id,
+      id: isAdminExist.id,
       role: isAdminExist.role,
     },
     config.jwt.secret as string,
@@ -51,7 +54,7 @@ const loginAdmin = async (
 
   const refreshToken = JwtHelper.createToken(
     {
-      id: isAdminExist._id,
+      id: isAdminExist.id,
       role: isAdminExist.role,
     },
     config.jwt.refresh_secret as string,
@@ -63,7 +66,14 @@ const loginAdmin = async (
     refreshToken,
   };
 };
+
+const deleteAdmin = async (id: string): Promise<IAdmin | null> => {
+  const admin = await AdminModel.findByIdAndDelete(id);
+
+  return admin;
+};
 export const AdminService = {
   createAdmin,
   loginAdmin,
+  deleteAdmin,
 };
