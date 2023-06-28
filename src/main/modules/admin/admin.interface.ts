@@ -13,9 +13,7 @@ export interface IAdmin extends Document {
 }
 
 export interface IAdminModel extends Model<IAdmin> {
-  isAdminExist(
-    phoneNumber: string
-  ): Promise<Pick<IAdmin, "phoneNumber" | "role" | "password" | "id">>;
+  isAdminExist(phoneNumber: string): Promise<IAdmin | null>;
 
   isPasswordMatch(
     givenPassword: string,

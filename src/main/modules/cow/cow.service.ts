@@ -6,8 +6,17 @@ import { paginationHelpers } from "../../../helpers/pagination";
 import { IPaginationOptions } from "../../../interfaces/pagination";
 import { cowSearchableFields } from "./cow.constant";
 import { IGenericResponse, TypePriceFilter } from "../../../interfaces/common";
+import UserModel from "../user/user.model";
 
 const createCow = async (cow: Cow): Promise<Cow | null> => {
+  // check if seller exists
+
+  const isSellerExist = await UserModel.findOne({ _id: cow.seller });
+
+  if (!isSellerExist) {
+    throw new ApiError(httpStatus.NOT_FOUND, "Seller not found");
+  }
+
   // check if cow already exists with the same name and seller id
   const isExist = await CowModel.findOne({
     name: cow.name,

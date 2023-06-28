@@ -6,6 +6,8 @@ import { Label } from "../cow/cow.interface";
 import { OrderModel } from "./order.model";
 import ApiError from "../../../errors/ApiError";
 import httpStatus from "http-status";
+import { User } from "../user/user.interface";
+import { JwtPayload } from "jsonwebtoken";
 
 const createOrder = async (order: ICreateOrderInput): Promise<Order | null> => {
   const session = await mongoose.startSession();
@@ -96,12 +98,31 @@ const createOrder = async (order: ICreateOrderInput): Promise<Order | null> => {
   return newOrder;
 };
 
-const getAllOrders = async (): Promise<Order[]> => {
-  const orders = await OrderModel.find()
-    .populate("cowId")
-    .populate("buyerId")
-    .populate("sellerId")
-    .exec();
+const getAllOrders = async (user: JwtPayload): Promise<Order[]> => {
+  let orders: Order[] = [];
+  if (user.role === "buyer") {
+    orders = await OrderModel.find({ buyerId: user.id })
+      .populate("cowId")
+      .populate("buyerId")
+      .populate("sellerId")
+      .exec();
+
+    console.log("orders", orders);
+  } else if (user.role === "seller") {
+    orders = await OrderModel.find({ sellerId: user.id })
+      .populate("cowId")
+      .populate("buyerId")
+      .populate("sellerId")
+      .exec();
+
+    console.log("orders", orders);
+  } else if (user.role === "admin") {
+    orders = await OrderModel.find()
+      .populate("cowId")
+      .populate("buyerId")
+      .populate("sellerId")
+      .exec();
+  }
 
   return orders;
 };
