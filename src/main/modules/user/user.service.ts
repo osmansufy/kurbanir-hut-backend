@@ -25,6 +25,7 @@ const createUser = async (user: User): Promise<User | null> => {
 };
 
 const getSingleUser = async (id: string): Promise<User | null> => {
+  if (!id) throw new ApiError(httpStatus.BAD_REQUEST, "User id is required");
   const user = UserModel.findOne({ _id: id });
   if (!user) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");
@@ -41,6 +42,8 @@ const updateUser = async (
   id: string,
   payload: Partial<User>
 ): Promise<User | null> => {
+  if (!id) throw new ApiError(httpStatus.BAD_REQUEST, "User id is required");
+
   const isExist = await UserModel.findOne({ _id: id });
   if (!isExist) {
     throw new ApiError(httpStatus.NOT_FOUND, "User not found");

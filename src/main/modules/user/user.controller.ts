@@ -3,6 +3,7 @@ import catchAsync from "../../../utility/catchAsync";
 import { UserService } from "./user.service";
 import sendResponse from "../../../utility/sendResponse";
 import { ILoginServerResponse } from "../../../interfaces/common";
+import { JwtPayload } from "jsonwebtoken";
 
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const newUser = await UserService.createUser(req.body);
@@ -48,6 +49,34 @@ const updateUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const user: JwtPayload | null = req.user;
+
+  const updatedUser = await UserService.updateUser(
+    user?.id as string,
+    req.body
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "User updated successfully",
+    data: updatedUser,
+    statusCode: 200,
+  });
+});
+
+const getMyProfile = catchAsync(async (req: Request, res: Response) => {
+  const user: JwtPayload | null = req.user;
+
+  const userInfo = await UserService.getSingleUser(user?.id as string);
+
+  res.status(200).json({
+    success: true,
+    message: "User fetched successfully",
+    data: userInfo,
+    statusCode: 200,
+  });
+});
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const deletedUser = await UserService.deleteUser(req.params.id);
 
@@ -106,7 +135,11 @@ export const UserController = {
   getSingleUser,
   getAllUsers,
   updateUser,
+
+  getMyProfile,
+  updateMyProfile,
   deleteUser,
+
   loginUser,
   refreshToken,
 };
