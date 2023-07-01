@@ -4,6 +4,7 @@ import pick from "../../../utility/pick";
 import { paginationFields } from "../../../constants/pagination";
 import { cowFilterableFields, priceFilter } from "./cow.constant";
 import catchAsync from "../../../utility/catchAsync";
+import sendResponse from "../../../utility/sendResponse";
 
 const createCow = catchAsync(async (req: Request, res: Response) => {
   const newCow = await CowService.createCow(req.body);
@@ -29,7 +30,7 @@ const getAllCows = catchAsync(async (req: Request, res: Response) => {
     priceRange
   );
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "Cows fetched successfully",
     data: cows,
@@ -40,7 +41,7 @@ const getAllCows = catchAsync(async (req: Request, res: Response) => {
 const getSingleCow = catchAsync(async (req: Request, res: Response) => {
   const cow = await CowService.getSingleCow(req.params.id);
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "Cow fetched successfully",
     data: cow,
@@ -57,7 +58,7 @@ const updateCow = catchAsync(async (req: Request, res: Response) => {
     req.body
   );
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "Cow updated successfully",
     data: updatedCow,
@@ -67,9 +68,10 @@ const updateCow = catchAsync(async (req: Request, res: Response) => {
 
 const deleteCow = catchAsync(async (req: Request, res: Response) => {
   const seller = req.user;
-  await CowService.deleteCow(req.params.id, seller?.id);
+  const deletedCow = await CowService.deleteCow(req.params.id, seller?.id);
 
-  res.status(200).json({
+  sendResponse(res, {
+    data: deletedCow,
     success: true,
     message: "Cow deleted successfully",
     statusCode: 200,

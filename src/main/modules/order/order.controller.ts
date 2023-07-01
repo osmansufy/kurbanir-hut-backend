@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { OrderService } from "./order.service";
 import catchAsync from "../../../utility/catchAsync";
+import sendResponse from "../../../utility/sendResponse";
 
 const createOrder = catchAsync(async (req: Request, res: Response) => {
   let cowId = req.body.cow;
@@ -16,7 +17,9 @@ const createOrder = catchAsync(async (req: Request, res: Response) => {
     buyer: buyerId,
   });
 
-  res.status(201).json({
+  sendResponse(res, {
+    statusCode: 201,
+    message: "Order created successfully",
     success: true,
     data: newOrder,
   });
@@ -30,13 +33,33 @@ const getAllOrders = catchAsync(async (req: Request, res: Response) => {
   }
   const orders = await OrderService.getAllOrders(user);
 
-  res.status(200).json({
+  sendResponse(res, {
+    statusCode: 200,
+    message: "Orders fetched successfully",
     success: true,
     data: orders,
+  });
+});
+
+const getSingleOrder = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user;
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const order = await OrderService.getSingleOrder(req.params.id, user);
+
+  sendResponse(res, {
+    statusCode: 200,
+    success: true,
+    message: "Order fetched successfully",
+    data: order,
   });
 });
 
 export const OrderController = {
   createOrder,
   getAllOrders,
+  getSingleOrder,
 };

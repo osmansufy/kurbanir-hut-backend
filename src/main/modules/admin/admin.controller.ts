@@ -8,7 +8,7 @@ import httpStatus from "http-status";
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const newAdmin = await AdminService.createAdmin(req.body);
 
-  res.status(201).json({
+  sendResponse(res, {
     success: true,
     message: "Admin created successfully",
     data: newAdmin,

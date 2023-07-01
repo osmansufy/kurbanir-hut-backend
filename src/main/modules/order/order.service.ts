@@ -127,7 +127,34 @@ const getAllOrders = async (user: JwtPayload): Promise<Order[]> => {
   return orders;
 };
 
+const getSingleOrder = async (
+  id: string,
+  user: JwtPayload
+): Promise<Order | null> => {
+  let order = null;
+
+  //  check user  role , if user is buyer or seller then check if order belongs to them  or not
+  if (user.role === "buyer") {
+    order = await OrderModel.findOne({ _id: id, buyerId: user.id })
+
+      .populate("cowId")
+      .populate("buyerId")
+      .populate("sellerId")
+      .exec();
+  } else if (user.role === "seller") {
+    order = await OrderModel.findOne({ _id: id, sellerId: user.id })
+
+      .populate("cowId")
+      .populate("buyerId")
+      .populate("sellerId")
+      .exec();
+  }
+
+  return order;
+};
+
 export const OrderService = {
   createOrder,
   getAllOrders,
+  getSingleOrder,
 };

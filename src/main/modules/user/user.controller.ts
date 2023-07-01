@@ -8,7 +8,7 @@ import { JwtPayload } from "jsonwebtoken";
 const createUser = catchAsync(async (req: Request, res: Response) => {
   const newUser = await UserService.createUser(req.body);
 
-  res.status(201).json({
+  sendResponse(res, {
     success: true,
     message: "User created successfully",
     data: newUser,
@@ -19,7 +19,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 const getSingleUser = catchAsync(async (req: Request, res: Response) => {
   const user = await UserService.getSingleUser(req.params.id);
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "User fetched successfully",
     data: user,
@@ -30,7 +30,7 @@ const getSingleUser = catchAsync(async (req: Request, res: Response) => {
 const getAllUsers = catchAsync(async (req: Request, res: Response) => {
   const users = await UserService.getAllUsers();
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "Users fetched successfully",
     data: users,
@@ -41,7 +41,7 @@ const getAllUsers = catchAsync(async (req: Request, res: Response) => {
 const updateUser = catchAsync(async (req: Request, res: Response) => {
   const updatedUser = await UserService.updateUser(req.params.id, req.body);
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "User updated successfully",
     data: updatedUser,
@@ -57,7 +57,7 @@ const updateMyProfile = catchAsync(async (req: Request, res: Response) => {
     req.body
   );
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "User updated successfully",
     data: updatedUser,
@@ -70,7 +70,7 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
 
   const userInfo = await UserService.getSingleUser(user?.id as string);
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "User fetched successfully",
     data: userInfo,
@@ -80,7 +80,7 @@ const getMyProfile = catchAsync(async (req: Request, res: Response) => {
 const deleteUser = catchAsync(async (req: Request, res: Response) => {
   const deletedUser = await UserService.deleteUser(req.params.id);
 
-  res.status(200).json({
+  sendResponse(res, {
     success: true,
     message: "User deleted successfully",
     data: deletedUser,
